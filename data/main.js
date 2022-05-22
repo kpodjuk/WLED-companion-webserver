@@ -22,7 +22,6 @@ window.setInterval(function () {
 }, 2000);
 
 function sendSolidColorRequest(request, target = 0) {
-    // console.log("sendSolidColorRequest("+request+", "+target+")");
 
     var xhr = new XMLHttpRequest();
     url = targetToUrl(target);
@@ -33,7 +32,7 @@ function sendSolidColorRequest(request, target = 0) {
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
-            var json = JSON.parse(xhr.responseText);
+            // var json = JSON.parse(xhr.responseText);
         }
     };
     var data = JSON.stringify(request);
@@ -122,15 +121,21 @@ function askAboutCurrentState(target = 0) {
     var xhr = new XMLHttpRequest();
     // add listener for error with request
     xhr.addEventListener('error', function () {
+        // error with request happened, lock that target
         lockTarget(target);
-        document.getElementById("status" + target).innerHTML = '<font color="red">Disconnected</font>';
     });
 
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
-            var parsedJson = JSON.parse(xhr.response)
-            unlockTarget(target);
-            populateWithCurrentState(parsedJson, target);
+            // request went fine, got state
+            var parsedJson = JSON.parse(xhr.response);
+
+            // check for need to unlock, and unlock if needed
+            if (document.getElementById('brightness' + target).disabled) {
+                unlockTarget(target);
+            }
+
+            populateWithCurrentStateIfChanged(parsedJson, target);
         }
     }
 
@@ -141,20 +146,37 @@ function askAboutCurrentState(target = 0) {
 
 }
 
-function populateWithCurrentState(parsedJson, target) {
-    var brightness = parsedJson.state.bri;
-    var colorRed = parsedJson.state.seg[0].col[0][0]
-    var colorGreen = parsedJson.state.seg[0].col[0][1]
-    var colorBlue = parsedJson.state.seg[0].col[0][2]
+var previousBrightness = [];
+var previousColor = [];
 
+function populateWithCurrentStateIfChanged(currentState, target) {
+
+    // there's need for an UI update, get brightness and hexString from state
+    var brightness = currentState.state.bri;
+    var colorRed = currentState.state.seg[0].col[0][0]
+    var colorGreen = currentState.state.seg[0].col[0][1]
+    var colorBlue = currentState.state.seg[0].col[0][2]
     var hexString = calculateStringFromRgb(colorRed, colorGreen, colorBlue);
 
-    // update UI
-    document.getElementById('brightness' + target).value = brightness;
-    document.getElementById('solidColor' + target).value = hexString;
+    // check if there's need to update UI at all
+    if (previousBrightness[target] == brightness && previousColor[target] == hexString) {
+        // it's the same as before, no need to update UI
+    } else {
+        // it's different now, should update UI
+        updateUI(brightness, hexString, target);
 
+    }
+
+
+    // save values from current state
+    previousBrightness[target] = brightness;
+    previousColor[target] = hexString;
 }
 
+function updateUI(brightness, hexString, target) {
+    document.getElementById('brightness' + target).value = brightness;
+    document.getElementById('solidColor' + target).value = hexString;
+}
 
 function targetToUrl(target) {
     switch (target) {
@@ -176,26 +198,29 @@ function targetToUrl(target) {
 }
 
 
-function lockTarget(target){
-    console.log(target+" locked");
+function lockTarget(target) {
 
-    document.getElementById("name"+target).style.color = "gray";
+    document.getElementById("name" + target).style.color = "gray";
 
-    document.getElementById("solidColor"+target).disabled = true;
-    document.getElementById("solidColor"+target).value = '#000000';
+    document.getElementById("solidColor" + target).disabled = true;
+    document.getElementById("solidColor" + target).value = '#000000';
 
-    document.getElementById("brightness"+target).disabled = true;
-    document.getElementById("brightness"+target).value = 0;
+    document.getElementById("brightness" + target).disabled = true;
+    document.getElementById("brightness" + target).value = 0;
 
     document.getElementById("status" + target).innerHTML = '<font color="red">Disconnected</font>';
 }
 
-function unlockTarget(target){
-    document.getElementById("name"+target).style.color = "black";
-    document.getElementById("solidColor"+target).disabled = false;
+function unlockTarget(target) {
+    console.log('unlocking target: ' + target);
+    document.getElementById("name" + target).style.color = "black";
+    document.getElementById("solidColor" + target).disabled = false;
     // document.getElementById("solidColor"+target).value = '#000000';
-    document.getElementById("brightness"+target).disabled = false;
+    document.getElementById("brightness" + target).disabled = false;
     // document.getElementById("brightness"+target).value = 0;
     document.getElementById("status" + target).innerHTML = '<font color="green">Connected</font>';
+
+    // clean previous state so we are sure it's updated after connecting again
+
 
 }
