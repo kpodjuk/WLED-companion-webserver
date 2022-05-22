@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+</head>
+
+<body>
+    <h1>Choose color:</h1>
+    <!-- <button id="niceColor">Biały</button> -->
+    <!-- <button id="sendRequest">Biały</button> -->
+    <table>
+        <tr>
+            <td>Name</td>
+            <td>Color</td>
+            <td>Brightness</td>
+        </tr>
+        <tr>
+            <td>Lamp</td>
+            <td><input id='solidColor0' type="color" onchange="setSolidColor(0)"></td>
+            <td><input type="range" min="1" max="255" value="50" class="slider" id="brightness0" onchange="setBrightness(0)"></td>
+        </tr>
+        <tr>
+            <td>
+                Over the shelf</td>
+            <td><input id='solidColor1' type="color" onchange="setSolidColor(1)"></td>
+            <td><input type="range" min="1" max="255" value="50" class="slider" id="brightness1" onchange="setBrightness(1)"></td>
+        </tr>
+        <tr>
+            <td>Under the shelf</td>
+            <td><input id='solidColor2' type="color" onchange="setSolidColor(2)"></td>
+            <td><input type="range" min="1" max="255" value="50" class="slider" id="brightness2" onchange="setBrightness(2)"></td>
+        </tr>
+        <tr>
+            <td>Desk</td>
+            <td><input id='solidColor3' type="color" onchange="setSolidColor(3)"></td>
+            <td><input type="range" min="1" max="255" value="50" class="slider" id="brightness3" onchange="setBrightness(3)"></td>
+        </tr>
+    </table>
+
+
+    <!-- 
+        <div class="slidecontainer">
+            <input type="range" min="1" max="255" value="50" class="slider" id="brightness">
+          </div> -->
+
+    <script src='main.js'></script>
+
+</body>
+
+</html>

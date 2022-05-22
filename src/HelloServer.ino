@@ -1,73 +1,77 @@
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
-#include <ESP8266WebServer.h>
+#include <ESP8266WiFiMulti.h>
 #include <ESP8266mDNS.h>
+#include <ESP8266WebServer.h>
+#include <FS.h>   // Include the SPIFFS library
 
-const char* ssid = "........";
-const char* password = "........";
+ESP8266WiFiMulti wifiMulti;     // Create an instance of the ESP8266WiFiMulti class, called 'wifiMulti'
 
-ESP8266WebServer server(80);
+ESP8266WebServer server(80);    // Create a webserver object that listens for HTTP request on port 80
 
-const int led = 13;
+String getContentType(String filename); // convert the file extension to the MIME type
+bool handleFileRead(String path);       // send the right file to the client (if it exists)
 
-void handleRoot() {
-  digitalWrite(led, 1);
-  server.send(200, "text/plain", "hello from esp8266!");
-  digitalWrite(led, 0);
-}
+void setup() {
+  Serial.begin(115200);         // Start the Serial communication to send messages to the computer
+  delay(10);
+  Serial.println('\n');
 
-void handleNotFound(){
-  digitalWrite(led, 1);
-  String message = "File Not Found\n\n";
-  message += "URI: ";
-  message += server.uri();
-  message += "\nMethod: ";
-  message += (server.method() == HTTP_GET)?"GET":"POST";
-  message += "\nArguments: ";
-  message += server.args();
-  message += "\n";
-  for (uint8_t i=0; i<server.args(); i++){
-    message += " " + server.argName(i) + ": " + server.arg(i) + "\n";
+
+  wifiMulti.addAP("Orange_Swiatlowod_Gora", "mlekogrzybowe");   // add Wi-Fi networks you want to connect to
+  wifiMulti.addAP("Orange_Swiatlowod_E8A0", "mlekogrzybowe");
+
+  Serial.println("Connecting ...");
+  int i = 0;
+  while (wifiMulti.run() != WL_CONNECTED) { // Wait for the Wi-Fi to connect
+    delay(250);
+    Serial.print('.');
   }
-  server.send(404, "text/plain", message);
-  digitalWrite(led, 0);
-}
-
-void setup(void){
-  pinMode(led, OUTPUT);
-  digitalWrite(led, 0);
-  Serial.begin(115200);
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, password);
-  Serial.println("");
-
-  // Wait for connection
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
-  Serial.println("");
+  Serial.println('\n');
   Serial.print("Connected to ");
-  Serial.println(ssid);
-  Serial.print("IP address: ");
-  Serial.println(WiFi.localIP());
+  Serial.println(WiFi.SSID());              // Tell us what network we're connected to
+  Serial.print("IP address:\t");
+  Serial.println(WiFi.localIP());           // Send the IP address of the ESP8266 to the computer
 
-  if (MDNS.begin("esp8266")) {
-    Serial.println("MDNS responder started");
+  if (MDNS.begin("esp8266")) {              // Start the mDNS responder for esp8266.local
+    Serial.println("mDNS responder started");
+  } else {
+    Serial.println("Error setting up MDNS responder!");
   }
 
-  server.on("/", handleRoot);
-
-  server.on("/inline", [](){
-    server.send(200, "text/plain", "this works as well");
+  SPIFFS.begin();                           // Start the SPI Flash Files System
+  
+  server.onNotFound([]() {                              // If the client requests any URI
+    if (!handleFileRead(server.uri()))                  // send it if it exists
+      server.send(404, "text/plain", "404: Not Found"); // otherwise, respond with a 404 (Not Found) error
   });
 
-  server.onNotFound(handleNotFound);
-
-  server.begin();
+  server.begin();                           // Actually start the server
   Serial.println("HTTP server started");
 }
 
-void loop(void){
+void loop(void) {
   server.handleClient();
+}
+
+String getContentType(String filename) { // convert the file extension to the MIME type
+  if (filename.endsWith(".html")) return "text/html";
+  else if (filename.endsWith(".css")) return "text/css";
+  else if (filename.endsWith(".js")) return "application/javascript";
+  else if (filename.endsWith(".ico")) return "image/x-icon";
+  return "text/plain";
+}
+
+bool handleFileRead(String path) { // send the right file to the client (if it exists)
+  Serial.println("handleFileRead: " + path);
+  if (path.endsWith("/")) path += "index.html";         // If a folder is requested, send the index file
+  String contentType = getContentType(path);            // Get the MIME type
+  if (SPIFFS.exists(path)) {                            // If the file exists
+    File file = SPIFFS.open(path, "r");                 // Open it
+    size_t sent = server.streamFile(file, contentType); // And send it to the client
+    file.close();                                       // Then close the file again
+    return true;
+  }
+  Serial.println("\tFile Not Found");
+  return false;                                         // If the file doesn't exist, return false
 }
