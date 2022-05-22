@@ -22,6 +22,8 @@ window.setInterval(function () {
 }, 2000);
 
 function sendSolidColorRequest(request, target = 0) {
+    // console.log("sendSolidColorRequest("+request+", "+target+")");
+
     var xhr = new XMLHttpRequest();
     url = targetToUrl(target);
 
@@ -35,7 +37,6 @@ function sendSolidColorRequest(request, target = 0) {
         }
     };
     var data = JSON.stringify(request);
-    console.log(data);
     xhr.send(data);
 
 }
@@ -53,7 +54,6 @@ function sendBrightnessRequest(desiredBrightness, target = 0) {
     xhr.open('GET', url, true);
     xhr.onload = function () {
         // Request finished. Do processing here.
-        // console.log("Brightness request finished");
     };
     xhr.send(null);
 
@@ -62,8 +62,6 @@ function sendBrightnessRequest(desiredBrightness, target = 0) {
 function setSolidColor(target = 0) {
     var colorString = document.getElementById('solidColor' + target).value;
 
-    console.log('solidColor' + target);
-    console.log('colorString' + colorString);
 
     colorArr = calculateRgbFromString(colorString);
     var request = {
@@ -124,14 +122,14 @@ function askAboutCurrentState(target = 0) {
     var xhr = new XMLHttpRequest();
     // add listener for error with request
     xhr.addEventListener('error', function () {
+        lockTarget(target);
         document.getElementById("status" + target).innerHTML = '<font color="red">Disconnected</font>';
     });
 
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
             var parsedJson = JSON.parse(xhr.response)
-            document.getElementById("status" + target).innerHTML = '<font color="green">Connected</font>';
-
+            unlockTarget(target);
             populateWithCurrentState(parsedJson, target);
         }
     }
@@ -145,17 +143,11 @@ function askAboutCurrentState(target = 0) {
 
 function populateWithCurrentState(parsedJson, target) {
     var brightness = parsedJson.state.bri;
-
     var colorRed = parsedJson.state.seg[0].col[0][0]
     var colorGreen = parsedJson.state.seg[0].col[0][1]
     var colorBlue = parsedJson.state.seg[0].col[0][2]
 
     var hexString = calculateStringFromRgb(colorRed, colorGreen, colorBlue);
-
-    // console.log("## ## ## STATE UPDATE ## ## ##");
-    // console.log("target:" + target);
-    // console.log("brightness:" + brightness);
-    // console.log("hexString:" + hexString);
 
     // update UI
     document.getElementById('brightness' + target).value = brightness;
@@ -181,4 +173,29 @@ function targetToUrl(target) {
     }
 
     return url;
+}
+
+
+function lockTarget(target){
+    console.log(target+" locked");
+
+    document.getElementById("name"+target).style.color = "gray";
+
+    document.getElementById("solidColor"+target).disabled = true;
+    document.getElementById("solidColor"+target).value = '#000000';
+
+    document.getElementById("brightness"+target).disabled = true;
+    document.getElementById("brightness"+target).value = 0;
+
+    document.getElementById("status" + target).innerHTML = '<font color="red">Disconnected</font>';
+}
+
+function unlockTarget(target){
+    document.getElementById("name"+target).style.color = "black";
+    document.getElementById("solidColor"+target).disabled = false;
+    // document.getElementById("solidColor"+target).value = '#000000';
+    document.getElementById("brightness"+target).disabled = false;
+    // document.getElementById("brightness"+target).value = 0;
+    document.getElementById("status" + target).innerHTML = '<font color="green">Connected</font>';
+
 }

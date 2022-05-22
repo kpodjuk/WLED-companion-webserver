@@ -17,9 +17,10 @@
             <td>Status</td>
         </tr>
         <tr>
-            <td>Lamp (all)</td>
-            <td><input id='solidColor0' type="color" onchange="setSolidColor(0)" oninput="setSolidColor(0)"></td>
-            <td><input type="range" min="1" max="255" value="50" class="slider" id="brightness0"
+            <td id="name0" style="color:gray">Lamp (all)</td>
+            <!-- <td><input id='solidColor0' type="color" onchange="setSolidColor(0)" oninput="setSolidColor(0)"></td> -->
+            <td><input id='solidColor0' type="color" onchange="setSolidColor(0)"></td>
+            <td><input type="range" min="0" max="255" class="slider" disabled value="0" id="brightness0"
                     onchange="setBrightness(0)"></td>
             <td>
                 <font color='red' id="status0">Disconnected</font>
@@ -32,9 +33,9 @@
             </td>
         </tr>
         <tr>
-            <td>Over the shelf</td>
+            <td id="name1" style="color:gray">Over the shelf</td>
             <td><input id='solidColor1' type="color" onchange="setSolidColor(1)"></td>
-            <td><input type="range" min="1" max="255" value="50" class="slider" id="brightness1"
+            <td><input type="range" min="0" max="255" class="slider" disabled value="0" id="brightness1"
                     onchange="setBrightness(1)"></td>
             <td>
                 <font color='red' id="status1">Disconnected</font>
@@ -42,9 +43,9 @@
 
         </tr>
         <tr>
-            <td>Under the shelf</td>
+            <td id="name2" style="color:gray">Under the shelf</td>
             <td><input id='solidColor2' type="color" onchange="setSolidColor(2)"></td>
-            <td><input type="range" min="1" max="255" value="50" class="slider" id="brightness2"
+            <td><input type="range" min="0" max="255" class="slider" disabled value="0" id="brightness2"
                     onchange="setBrightness(2)"></td>
             <td>
                 <font color='red' id="status2">Disconnected</font>
@@ -52,9 +53,9 @@
 
         </tr>
         <tr>
-            <td>Desk</td>
+            <td id="name3" style="color:gray">Desk</td>
             <td><input id='solidColor3' type="color" onchange="setSolidColor(3)"></td>
-            <td><input type="range" min="1" max="255" value="50" class="slider" id="brightness3"
+            <td><input type="range" min="0" max="255" class="slider" disabled value="0" id="brightness3"
                     onchange="setBrightness(3)"></td>
             <td>
                 <font color='red' id="status3">Disconnected</font>
@@ -62,12 +63,6 @@
 
         </tr>
     </table>
-
-
-    <!-- 
-        <div class="slidecontainer">
-            <input type="range" min="1" max="255" value="50" class="slider" id="brightness">
-          </div> -->
 
     <script src='main.js'></script>
 
