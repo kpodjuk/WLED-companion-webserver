@@ -111,18 +111,26 @@ function setBrightness(target = 0) {
 }
 
 
+var previousBrightness = [];
+var previousColor = [];
+
 function askAboutCurrentState(target = 0) {
 
-    url = targetToUrl(target);
+    // check if current target is locked or not
+    var targetIsLocked = document.getElementById('brightness' + target).disabled;
 
+
+    url = targetToUrl(target);
     // needs json/si
     url += "json/si";
 
     var xhr = new XMLHttpRequest();
     // add listener for error with request
     xhr.addEventListener('error', function () {
-        // error with request happened, lock that target
-        lockTarget(target);
+        // error with request happened, lock that target if it's not locked already
+        if (!targetIsLocked) {
+            lockTarget(target);
+        }
     });
 
     xhr.onreadystatechange = function () {
@@ -131,8 +139,11 @@ function askAboutCurrentState(target = 0) {
             var parsedJson = JSON.parse(xhr.response);
 
             // check for need to unlock, and unlock if needed
-            if (document.getElementById('brightness' + target).disabled) {
+            if (targetIsLocked) {
                 unlockTarget(target);
+                // reset previous states so you are sure UI gets updated 
+                previousBrightness[target] = null;
+                previousColor[target] = null;
             }
 
             populateWithCurrentStateIfChanged(parsedJson, target);
@@ -146,12 +157,9 @@ function askAboutCurrentState(target = 0) {
 
 }
 
-var previousBrightness = [];
-var previousColor = [];
-
 function populateWithCurrentStateIfChanged(currentState, target) {
 
-    // there's need for an UI update, get brightness and hexString from state
+    // perhaps there's need for an UI update, get brightness and hexString from state
     var brightness = currentState.state.bri;
     var colorRed = currentState.state.seg[0].col[0][0]
     var colorGreen = currentState.state.seg[0].col[0][1]
@@ -164,9 +172,7 @@ function populateWithCurrentStateIfChanged(currentState, target) {
     } else {
         // it's different now, should update UI
         updateUI(brightness, hexString, target);
-
     }
-
 
     // save values from current state
     previousBrightness[target] = brightness;
@@ -212,7 +218,7 @@ function lockTarget(target) {
 }
 
 function unlockTarget(target) {
-    console.log('unlocking target: ' + target);
+    // console.log('unlocking target: ' + target);
     document.getElementById("name" + target).style.color = "black";
     document.getElementById("solidColor" + target).disabled = false;
     // document.getElementById("solidColor"+target).value = '#000000';
