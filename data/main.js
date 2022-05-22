@@ -1,54 +1,39 @@
+// URLS
+var lampUrl = "http://192.168.1.41/";             // 0
+var overTheShelfUrl = "http://192.168.1.59/";     // 1
+var underTheShelfUrl = "http://192.168.1.42/";    // 2
+var deskUrl = "http://192.168.1.33/";             // 3
 
 
+function askAboutAllCurrentStates() {
+    askAboutCurrentState(0);
+    askAboutCurrentState(1);
+    askAboutCurrentState(2);
+    askAboutCurrentState(3);
+}
 
-// document.getElementById('sendRequest').addEventListener("click", sendRequest)
-// document.getElementById('solidColor0').addEventListener("input", setSolidColor(0));
-// document.getElementById('solidColor1').addEventListener("input", setSolidColor(1));
-// document.getElementById('solidColor2').addEventListener("input", setSolidColor(2));
-// document.getElementById('solidColor3').addEventListener("input", setSolidColor(3));
+// populate inputs with current state after load
+askAboutAllCurrentStates();
 
 
-// document.getElementById('niceColor').addEventListener("input", setNiceColor)
-// document.getElementById('brightness').addEventListener("input", setBrightness)
+// set interval for state refresh
+window.setInterval(function () {
+    askAboutAllCurrentStates();
+}, 2000);
+
 function sendSolidColorRequest(request, target = 0) {
-
-    // console.log("sendRequest():");
-
-    // Sending and receiving data in JSON format using POST method
-    //
     var xhr = new XMLHttpRequest();
+    url = targetToUrl(target);
 
-
-    var lampUrl = "http://192.168.1.41/json/";             // 0
-    var overTheShelfUrl = "http://192.168.1.59/json/";     // 1
-    var underTheShelfUrl = "http://192.168.1.42/json/";    // 2
-    var deskUrl = "http://192.168.1.33/json/";             // 3
-
-    switch (target) {
-        case 0:
-            url = lampUrl;
-            break;
-        case 1:
-            url = overTheShelfUrl;
-            break;
-        case 2:
-            url = underTheShelfUrl;
-            break;
-        case 3:
-            url = deskUrl;
-            break;
-    }
-
+    // needs json/
+    url += "json/";
     xhr.open("POST", url, true);
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
             var json = JSON.parse(xhr.responseText);
-            // console.log(json.email + ", " + json.password);
-            // console.log(json) // answer here
         }
     };
-    // {"seg": [{"col":[[0,255,200]]}]
     var data = JSON.stringify(request);
     console.log(data);
     xhr.send(data);
@@ -58,38 +43,20 @@ function sendSolidColorRequest(request, target = 0) {
 
 function sendBrightnessRequest(desiredBrightness, target = 0) {
 
-    var lampUrl = "http://192.168.1.41/win/";             // 0
-    var overTheShelfUrl = "http://192.168.1.59/win/";     // 1
-    var underTheShelfUrl = "http://192.168.1.42/win/";    // 2
-    var deskUrl = "http://192.168.1.33/win/";             // 3
+    url = targetToUrl(target);
 
-    switch (target) {
-        case 0:
-            url = lampUrl;
-            break;
-        case 1:
-            url = overTheShelfUrl;
-            break;
-        case 2:
-            url = underTheShelfUrl;
-            break;
-        case 3:
-            url = deskUrl;
-            break;
-    }
-
+    // needs win/
+    url += "win/";
     url += "&A=" + desiredBrightness;
 
     var xhr = new XMLHttpRequest();
     xhr.open('GET', url, true);
-
-
     xhr.onload = function () {
         // Request finished. Do processing here.
         // console.log("Brightness request finished");
     };
-
     xhr.send(null);
+
 }
 
 function setSolidColor(target = 0) {
@@ -97,7 +64,6 @@ function setSolidColor(target = 0) {
     switch (target) {
         case 0:
             var colorString = document.getElementById('solidColor0').value;
-
             break;
         case 1:
             var colorString = document.getElementById('solidColor1').value;
@@ -109,8 +75,6 @@ function setSolidColor(target = 0) {
             var colorString = document.getElementById('solidColor3').value;
             break;
     }
-
-
 
     colorArr = calculateRgbFromString(colorString);
     var request = {
@@ -134,26 +98,91 @@ function calculateRgbFromString(string) {
 }
 
 
+function calculateStringFromRgb(r, g, b) {
+    r = r.toString(16);
+    g = g.toString(16);
+    b = b.toString(16);
+
+    if (r.length < 2) {
+        r = "0" + r;
+    }
+    if (g.length < 2) {
+        g = "0" + g;
+    }
+    if (b.length < 2) {
+        b = "0" + b;
+    }
+
+    return "#" + r + g + b;
+}
+
+
 
 function setBrightness(target = 0) {
 
-    // console.log("target: " + target);
+    var desiredBrightness = document.getElementById('brightness'+target).value;
+    sendBrightnessRequest(desiredBrightness, target);
+}
+
+
+function askAboutCurrentState(target = 0) {
+
+    url = targetToUrl(target);
+
+    // needs json/si
+    url += "json/si";
+
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            var parsedJson = JSON.parse(xhr.response)
+            populateWithCurrentState(parsedJson, target);
+        }
+    }
+
+    xhr.open('GET', url, true);
+    xhr.onload = function () {
+    };
+    xhr.send(null);
+
+}
+
+function populateWithCurrentState(parsedJson, target) {
+    var brightness = parsedJson.state.bri;
+
+    var colorRed = parsedJson.state.seg[0].col[0][0]
+    var colorGreen = parsedJson.state.seg[0].col[0][1]
+    var colorBlue = parsedJson.state.seg[0].col[0][2]
+
+    var hexString = calculateStringFromRgb(colorRed, colorGreen, colorBlue);
+
+    // console.log("## ## ## STATE UPDATE ## ## ##");
+    // console.log("target:" + target);
+    // console.log("brightness:" + brightness);
+    // console.log("hexString:" + hexString);
+
+    // update UI
+    document.getElementById('brightness'+target).value = brightness;
+    document.getElementById('solidColor'+target).value = hexString;
+
+}
+
+
+function targetToUrl(target) {
     switch (target) {
         case 0:
-            var desiredBrightness = document.getElementById('brightness0').value;
+            url = lampUrl;
             break;
         case 1:
-            var desiredBrightness = document.getElementById('brightness1').value;
+            url = overTheShelfUrl;
             break;
         case 2:
-            var desiredBrightness = document.getElementById('brightness2').value;
+            url = underTheShelfUrl;
             break;
         case 3:
-            var desiredBrightness = document.getElementById('brightness3').value;
+            url = deskUrl;
             break;
     }
 
-    sendBrightnessRequest(desiredBrightness, target);
-
-
+    return url;
 }
