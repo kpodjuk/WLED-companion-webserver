@@ -5,19 +5,56 @@
 </head>
 
 <body>
-    <h1>Choose a preset (that will apply to all strips):</h1>
-    <label for="cars">📜Preset:</label>
+    <h1>Choose a scene:</h1>
+    <label for="scenes">&#128220;Scene:</label>
 
-    <select name="cars" id="cars">
-        <option value="volvo">Volvo</option>
-        <option value="saab">Saab</option>
-        <option value="mercedes">Mercedes</option>
-        <option value="audi">Audi</option>
+    <select default='createNewOne' name="sceneDropdown" id="sceneDropdown" oninput="readSceneDropDown()">
+        <option value="createNewOne">Create new one...</option>
+        
+        <option value="scene_0">Scene 0</option>
+        <option value="scene_1">Scene 1</option>
+        <option value="scene_2">Scene 1</option>
+
+
+        <script src='populateScenes.js'></script>
+
     </select>
+    <div style='display: none' id="sceneCreationForm">
+        <h2>Choose desired scene parameters:</h2>
+        <table>
+            <tr>
+                <td colspan="3"><input type='text' id="scaneCreationSceneName" placeholder="Scene name"></td>
+            </tr>
+            <tr>
+                <td>Name</td>
+                <td>Color</td>
+                <td>Brightness</td>
+            </tr>
+
+
+            <tr>
+                <td>Over the shelf</td>
+                <td><input id="sceneCreationFormColor1" type="color"></td>
+                <td><input type="range" min="0" max="255" class="slider" value="0" id="sceneCreationFormBrightness1"
+                        onchange="setBrightness(1)"></td>
+            </tr>
+            <tr>
+                <td>Under the shelf</td>
+                <td><input id='sceneCreationFormColor2' type="color"></td>
+                <td><input type="range" min="0" max="255" class="slider" value="0" id="sceneCreationFormBrightness2"></td>
+            </tr>
+            <tr>
+                <td>Desk</td>
+                <td><input id='sceneCreationFormColor3' type="color"></td>
+                <td><input type="range" min="0" max="255" class="slider" value="0" id="sceneCreationFormBrightness3"></td>
+            </tr>
+            <tr>
+                <td><button type="button" onclick="submitSceneCreationForm()">Create scene!</button></td>
+            </tr>
+        </table>
+    </div>
     <hr>
-    <h1>Available LED strips:</h1>
-    <!-- <button id="niceColor">Biały</button> -->
-    <!-- <button id="sendRequest">Biały</button> -->
+    <h1>Current LED status:</h1>
     <!-- <table border="1"> -->
     <table>
         <tr>
@@ -44,7 +81,7 @@
         </tr>
         <tr>
             <td id="name1" style="color:gray">Over the shelf</td>
-            <td><input id='solidColor1' type="color" onchange="setSolidColor(1)"></td>
+            <td><input style="animation-duration:1s" id='solidColor1' type="color" onchange="setSolidColor(1)"></td>
             <td><input type="range" min="0" max="255" class="slider" disabled value="0" id="brightness1"
                     onchange="setBrightness(1)"></td>
             <td>
@@ -54,7 +91,7 @@
         </tr>
         <tr>
             <td id="name2" style="color:gray">Under the shelf</td>
-            <td><input id='solidColor2' type="color" onchange="setSolidColor(2)"></td>
+            <td><input style="animation-duration:1s" id='solidColor2' type="color" onchange="setSolidColor(2)"></td>
             <td><input type="range" min="0" max="255" class="slider" disabled value="0" id="brightness2"
                     onchange="setBrightness(2)"></td>
             <td>
@@ -64,7 +101,7 @@
         </tr>
         <tr>
             <td id="name3" style="color:gray">Desk</td>
-            <td><input id='solidColor3' type="color" onchange="setSolidColor(3)"></td>
+            <td><input style="animation-duration:1s" id='solidColor3' type="color" onchange="setSolidColor(3)"></td>
             <td><input type="range" min="0" max="255" class="slider" disabled value="0" id="brightness3"
                     onchange="setBrightness(3)"></td>
             <td>
@@ -75,6 +112,7 @@
     </table>
 
     <script src='main.js'></script>
+    <script src='scenes.js'></script>
 
 </body>
 

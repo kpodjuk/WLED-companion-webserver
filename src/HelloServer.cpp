@@ -4,6 +4,8 @@
 #include <ESP8266mDNS.h>
 #include <ESP8266WebServer.h>
 #include <FS.h> // Include the SPIFFS library
+#include "configHandler.h"
+#include "ArduinoJson.h"
 
 ESP8266WiFiMulti wifiMulti; // Create an instance of the ESP8266WiFiMulti class, called 'wifiMulti'
 
@@ -14,20 +16,25 @@ bool handleFileRead(String path);       // send the right file to the client (if
 
 void setup()
 {
+  DynamicJsonDocument doc(1024);
+
   Serial.begin(115200); // Start the Serial communication to send messages to the computer
   delay(10);
   Serial.println('\n');
 
   wifiMulti.addAP("Orange_Swiatlowod_Gora", "mlekogrzybowe"); // add Wi-Fi networks you want to connect to
-  wifiMulti.addAP("Orange_Swiatlowod_E8A0", "mlekogrzybowe");
+  // wifiMulti.addAP("Orange_Swiatlowod_E8A0", "mlekogrzybowe");
 
   Serial.println("Connecting ...");
   int i = 0;
+  // DISABLED WAITING FOR CONNECTION
   while (wifiMulti.run() != WL_CONNECTED)
   { // Wait for the Wi-Fi to connect
     delay(250);
     Serial.print('.');
   }
+  // END DISABLED WAITING FOR CONNECTION
+
   Serial.println('\n');
   Serial.print("Connected to ");
   Serial.println(WiFi.SSID()); // Tell us what network we're connected to
@@ -52,6 +59,18 @@ void setup()
 
   server.begin(); // Actually start the server
   Serial.println("HTTP server started");
+
+
+  // test out saveNewSceneIntoDatabase usage
+  String sceneName = "sceneNameAsParam";
+  int32_t colors[] = {0xFF0000, 0xFF0000, 0xFF0000};
+  int32_t brightnesses[] = {0xFF, 125, 50};
+  appendNewSceneIntoDatabase(sceneName, colors, brightnesses);
+
+  // try to read existing scenes from database
+  readExistingScenesFromDatabase();
+
+
 }
 
 void loop(void)
