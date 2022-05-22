@@ -60,21 +60,10 @@ function sendBrightnessRequest(desiredBrightness, target = 0) {
 }
 
 function setSolidColor(target = 0) {
+    var colorString = document.getElementById('solidColor' + target).value;
 
-    switch (target) {
-        case 0:
-            var colorString = document.getElementById('solidColor0').value;
-            break;
-        case 1:
-            var colorString = document.getElementById('solidColor1').value;
-            break;
-        case 2:
-            var colorString = document.getElementById('solidColor2').value;
-            break;
-        case 3:
-            var colorString = document.getElementById('solidColor3').value;
-            break;
-    }
+    console.log('solidColor' + target);
+    console.log('colorString' + colorString);
 
     colorArr = calculateRgbFromString(colorString);
     var request = {
@@ -120,7 +109,7 @@ function calculateStringFromRgb(r, g, b) {
 
 function setBrightness(target = 0) {
 
-    var desiredBrightness = document.getElementById('brightness'+target).value;
+    var desiredBrightness = document.getElementById('brightness' + target).value;
     sendBrightnessRequest(desiredBrightness, target);
 }
 
@@ -133,9 +122,16 @@ function askAboutCurrentState(target = 0) {
     url += "json/si";
 
     var xhr = new XMLHttpRequest();
+    // add listener for error with request
+    xhr.addEventListener('error', function () {
+        document.getElementById("status" + target).innerHTML = '<font color="red">Disconnected</font>';
+    });
+
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
             var parsedJson = JSON.parse(xhr.response)
+            document.getElementById("status" + target).innerHTML = '<font color="green">Connected</font>';
+
             populateWithCurrentState(parsedJson, target);
         }
     }
@@ -162,8 +158,8 @@ function populateWithCurrentState(parsedJson, target) {
     // console.log("hexString:" + hexString);
 
     // update UI
-    document.getElementById('brightness'+target).value = brightness;
-    document.getElementById('solidColor'+target).value = hexString;
+    document.getElementById('brightness' + target).value = brightness;
+    document.getElementById('solidColor' + target).value = hexString;
 
 }
 
