@@ -14,10 +14,47 @@ ESP8266WebServer server(80); // Create a webserver object that listens for HTTP 
 String getContentType(String filename); // convert the file extension to the MIME type
 bool handleFileRead(String path);       // send the right file to the client (if it exists)
 
+void handleSceneCreation()
+{
+  if (server.hasArg("plain") == false)
+  { // Check if body received
+    server.send(200, "text/plain", "Body not received when trying to /handleSceneCreation");
+    return;
+  }
+
+  String message = "Got body on /handleSceneCreation:\n";
+  message += server.arg("plain");
+  message += "\n";
+  server.send(200, "text/plain", message);
+  Serial.println(message);
+
+  // deserialize message
+  DynamicJsonDocument doc(maxJsonDocSizeForReading);
+  deserializeJson(doc, server.arg("plain"));
+
+  // process body into variables understood by appendNewSceneIntoDatabase function
+  // create scene name variable
+  String sceneName = doc["sceneName"];
+
+  // create and fill all colors array
+  int32_t colors[maxTargets];
+  for (int i = 0; i < maxTargets; i++)
+  {
+    colors[i] = doc["colors"][i];
+  }
+
+  // create and fill all brightnneses array
+  int32_t brightnesses[maxTargets];
+  for (int i = 0; i < maxTargets; i++)
+  {
+    brightnesses[i] = doc["brightnesses"][i];
+  }
+
+  appendNewSceneIntoDatabase(sceneName, colors, brightnesses);
+}
+
 void setup()
 {
-  DynamicJsonDocument doc(1024);
-
   Serial.begin(115200); // Start the Serial communication to send messages to the computer
   delay(10);
   Serial.println('\n');
@@ -52,25 +89,23 @@ void setup()
 
   SPIFFS.begin(); // Start the SPI Flash Files System
 
+  // ######################## Web server handler function define START ########################
+
   server.onNotFound([]() {                              // If the client requests any URI
     if (!handleFileRead(server.uri()))                  // send it if it exists
       server.send(404, "text/plain", "404: Not Found"); // otherwise, respond with a 404 (Not Found) error
   });
 
+  // handle POST data on /handleSceneCreation
+  server.on("/handleSceneCreation", handleSceneCreation);
+
+  // ######################## Web server handler function define END ########################
+
   server.begin(); // Actually start the server
   Serial.println("HTTP server started");
 
-
-  // test out saveNewSceneIntoDatabase usage
-  String sceneName = "sceneNameAsParam";
-  int32_t colors[] = {0xFF0000, 0xFF0000, 0xFF0000};
-  int32_t brightnesses[] = {0xFF, 125, 50};
-  appendNewSceneIntoDatabase(sceneName, colors, brightnesses);
-
   // try to read existing scenes from database
   readExistingScenesFromDatabase();
-
-
 }
 
 void loop(void)

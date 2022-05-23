@@ -13,8 +13,6 @@ void appendNewSceneIntoDatabase(String desiredSceneName, int32_t *desiredColorsP
     DynamicJsonDocument doc(maxJsonDocSizeForAppending);
 
     File file = SPIFFS.open(sceneDatabaseFileName, "r");
-    // Serial.print("current database file size: ");
-    // Serial.println(file.size());
 
     // read file into json object and close file
     deserializeJson(doc, file);
@@ -26,7 +24,6 @@ void appendNewSceneIntoDatabase(String desiredSceneName, int32_t *desiredColorsP
     obj["sceneName"] = desiredSceneName;
     // print scene name
     Serial.println("sceneName: " + desiredSceneName);
-
 
     // add all strip colors
     for (int i = 0; i < maxTargets; i++)
@@ -43,18 +40,17 @@ void appendNewSceneIntoDatabase(String desiredSceneName, int32_t *desiredColorsP
     for (int i = 0; i < maxTargets; i++)
     {
         obj["brightnesses"].add(desiredBrightnessPtr[i]);
-                // print all strip brightnesses
+        // print all strip brightnesses
         Serial.print("brightnesses[");
         Serial.print(i);
         Serial.print("]: ");
         Serial.println(desiredBrightnessPtr[i]);
     }
 
-    // write json to file, now richer by 1 element, 
+    // write json to file, now richer by 1 element, and close file
     file = SPIFFS.open(sceneDatabaseFileName, "w");
     serializeJson(doc, file);
     file.close();
-
 }
 
 void readExistingScenesFromDatabase()
@@ -74,10 +70,9 @@ void readExistingScenesFromDatabase()
     Serial.println(doc.size());
 
     // make sure you can read properties
-    // String firstSceneName = doc[0]["sceneName"];   
+    // String firstSceneName = doc[0]["sceneName"];
     // Serial.print("firstSceneName: ");
     // Serial.print(firstSceneName);
-
 }
 
 // ####### HELPER FUNCTIONS #######

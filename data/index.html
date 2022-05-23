@@ -10,7 +10,7 @@
 
     <select default='createNewOne' name="sceneDropdown" id="sceneDropdown" oninput="readSceneDropDown()">
         <option value="createNewOne">Create new one...</option>
-        
+
         <option value="scene_0">Scene 0</option>
         <option value="scene_1">Scene 1</option>
         <option value="scene_2">Scene 1</option>
@@ -41,12 +41,14 @@
             <tr>
                 <td>Under the shelf</td>
                 <td><input id='sceneCreationFormColor2' type="color"></td>
-                <td><input type="range" min="0" max="255" class="slider" value="0" id="sceneCreationFormBrightness2"></td>
+                <td><input type="range" min="0" max="255" class="slider" value="0" id="sceneCreationFormBrightness2">
+                </td>
             </tr>
             <tr>
                 <td>Desk</td>
                 <td><input id='sceneCreationFormColor3' type="color"></td>
-                <td><input type="range" min="0" max="255" class="slider" value="0" id="sceneCreationFormBrightness3"></td>
+                <td><input type="range" min="0" max="255" class="slider" value="0" id="sceneCreationFormBrightness3">
+                </td>
             </tr>
             <tr>
                 <td><button type="button" onclick="submitSceneCreationForm()">Create scene!</button></td>
