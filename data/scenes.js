@@ -13,10 +13,12 @@ function readSceneDropDown() {
 
     if (choosenOption == "createNewOne") {
         displaySceneCreationForm();
-    } else {
-        // already existing scene was choosen, scenes have a value starting with "scene_IDGOESHERE"
+    } else if (choosenOption == "noneChoosen") {
+        // nothing to do 
         hideSceneCreationForm();
-        var sceneId = choosenOption.substring(6);
+    } else {
+        // already existing scene was choosen, scenes have a value = sceneId
+        hideSceneCreationForm();
         applyScene(sceneId);
     }
 
@@ -28,45 +30,67 @@ function displaySceneCreationForm() {
 }
 
 function hideSceneCreationForm() {
-    console.log('hiding scene creation form');
     document.getElementById('sceneCreationForm').style.display = 'none';
-
 }
 
 function applyScene(sceneId) {
     console.log('scene is choosen with id: ' + sceneId);
-
 }
 
 
 function submitSceneCreationForm() {
 
     var targetSettings = [];
-
     var scaneNameId = "scaneCreationSceneName";
 
+    var scene = { // scene object to be filled with data
+        "sceneName": document.getElementById(scaneNameId).value,
+        "affectedTargets": [],
+    };
 
-    // populate targetSettings array
+
     for (var target = 1; target <= maxTargets; target++) {
         // generate input ids
         var brightnessInputId = "sceneCreationFormBrightness" + target;
         var colorInputId = "sceneCreationFormColor" + target;
+        var colorRGB = calculateRgbFromString(document.getElementById(colorInputId).value);
 
-        // push current target properties to array
-        targetSettings.push({
-            color: document.getElementById(colorInputId).value,
-            brightness: document.getElementById(brightnessInputId).value,
-        });
+
+        var currentTarget = {
+            "brightness": document.getElementById(brightnessInputId).value,
+            "color": {
+                "r": colorRGB[0],
+                "g": colorRGB[1],
+                "b": colorRGB[2],
+            }
+        }
+
+        scene.affectedTargets.push(currentTarget);
+
 
     }
-    // push scene name as a last element of array after all targets(led strips)
-    targetSettings.push({ sceneName: document.getElementById(scaneNameId).value });
-    createScene(targetSettings);
+
+    createScene(scene);
 
 }
 
 
-function createScene(targetSettings) {
-    // send scene settings to server to save in a config
-    console.log(targetSettings);
+function createScene(scene) {
+    // Sending and receiving data in JSON format using POST method
+    //
+    var xhr = new XMLHttpRequest();
+    var url = "http://192.168.1.52/handleSceneCreation";
+
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+        }
+    };
+
+
+    var data = JSON.stringify(scene);
+    console.log(data)
+    xhr.send(data);
+
 }

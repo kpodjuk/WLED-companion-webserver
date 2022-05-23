@@ -4,53 +4,10 @@
 #include "string.h"
 #include "stdio.h"
 
-void appendNewSceneIntoDatabase(String desiredSceneName, int32_t *desiredColorsPtr, int32_t *desiredBrightnessPtr)
+void appendNewSceneIntoDatabase(const DynamicJsonDocument& sceneObject)
 {
 
-    Serial.println("Trying to get new scene appended to database!");
 
-    // create json object for scene, variable could be a lot smaller
-    DynamicJsonDocument doc(maxJsonDocSizeForAppending);
-
-    File file = SPIFFS.open(sceneDatabaseFileName, "r");
-
-    // read file into json object and close file
-    deserializeJson(doc, file);
-    file.close();
-
-    // create object that you are going to append to json object
-    JsonObject obj = doc.createNestedObject();
-    // add scene name
-    obj["sceneName"] = desiredSceneName;
-    // print scene name
-    Serial.println("sceneName: " + desiredSceneName);
-
-    // add all strip colors
-    for (int i = 0; i < maxTargets; i++)
-    {
-        obj["colors"].add(desiredColorsPtr[i]);
-        // print all strip colors
-        Serial.print("colors[");
-        Serial.print(i);
-        Serial.print("]: ");
-        Serial.println(desiredColorsPtr[i]);
-    }
-
-    // add all strip brightnesses
-    for (int i = 0; i < maxTargets; i++)
-    {
-        obj["brightnesses"].add(desiredBrightnessPtr[i]);
-        // print all strip brightnesses
-        Serial.print("brightnesses[");
-        Serial.print(i);
-        Serial.print("]: ");
-        Serial.println(desiredBrightnessPtr[i]);
-    }
-
-    // write json to file, now richer by 1 element, and close file
-    file = SPIFFS.open(sceneDatabaseFileName, "w");
-    serializeJson(doc, file);
-    file.close();
 }
 
 void readExistingScenesFromDatabase()
@@ -66,7 +23,7 @@ void readExistingScenesFromDatabase()
     file.close();
 
     // print total number of scenes
-    Serial.println("Number of scenes:");
+    Serial.print("Number of loaded scenes: ");
     Serial.println(doc.size());
 
     // make sure you can read properties

@@ -29,28 +29,31 @@ void handleSceneCreation()
   Serial.println(message);
 
   // deserialize message
-  DynamicJsonDocument doc(maxJsonDocSizeForReading);
-  deserializeJson(doc, server.arg("plain"));
+  DynamicJsonDocument newScene(maxJsonDocSizeForReading);
+  deserializeJson(newScene, server.arg("plain"));
 
-  // process body into variables understood by appendNewSceneIntoDatabase function
-  // create scene name variable
-  String sceneName = doc["sceneName"];
+  // create json object that will hold current scene database
+  DynamicJsonDocument currentDatabaseStatus(maxJsonDocSizeForAppending);
+  // open file with current scene database
+  File file = SPIFFS.open(sceneDatabaseFileName, "r");
 
-  // create and fill all colors array
-  int32_t colors[maxTargets];
-  for (int i = 0; i < maxTargets; i++)
+  // read file into json object and close file
+  deserializeJson(currentDatabaseStatus, file);
+  file.close();
+
+  if (currentDatabaseStatus.isNull())
   {
-    colors[i] = doc["colors"][i];
+    // if file is empty, create new json object
+    currentDatabaseStatus["scenes"] = JsonArray();
   }
 
-  // create and fill all brightnneses array
-  int32_t brightnesses[maxTargets];
-  for (int i = 0; i < maxTargets; i++)
-  {
-    brightnesses[i] = doc["brightnesses"][i];
-  }
+  // append new scene to the database
+  currentDatabaseStatus["scenes"].add(newScene);
 
-  appendNewSceneIntoDatabase(sceneName, colors, brightnesses);
+  // write json to file, now richer by 1 element, and close file
+  file = SPIFFS.open(sceneDatabaseFileName, "w");
+  serializeJson(currentDatabaseStatus, file);
+  file.close();
 }
 
 void setup()
@@ -101,6 +104,7 @@ void setup()
 
   // ######################## Web server handler function define END ########################
 
+  server.enableCORS(true);
   server.begin(); // Actually start the server
   Serial.println("HTTP server started");
 

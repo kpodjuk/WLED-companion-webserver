@@ -8,12 +8,12 @@
     <h1>Choose a scene:</h1>
     <label for="scenes">&#128220;Scene:</label>
 
-    <select default='createNewOne' name="sceneDropdown" id="sceneDropdown" oninput="readSceneDropDown()">
-        <option value="createNewOne">Create new one...</option>
-
+    <select name="sceneDropdown" id="sceneDropdown" oninput="readSceneDropDown()">
+        <option value="noneChoosen"><font style='color: gray'>Choose your scene...</font></option>
         <option value="scene_0">Scene 0</option>
         <option value="scene_1">Scene 1</option>
-        <option value="scene_2">Scene 1</option>
+        <option value="scene_2">Scene 2</option>
+        <option value="createNewOne">Create new one...</option>
 
 
         <script src='populateScenes.js'></script>
@@ -26,7 +26,7 @@
                 <td colspan="3"><input type='text' id="scaneCreationSceneName" placeholder="Scene name"></td>
             </tr>
             <tr>
-                <td>Name</td>
+                <td>WLED name</td>
                 <td>Color</td>
                 <td>Brightness</td>
             </tr>
@@ -60,7 +60,7 @@
     <!-- <table border="1"> -->
     <table>
         <tr>
-            <td>Name</td>
+            <td>WLED name</td>
             <td>Color</td>
             <td>Brightness</td>
             <td>Status</td>
