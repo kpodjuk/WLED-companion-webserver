@@ -4,32 +4,25 @@
 #include "string.h"
 #include "stdio.h"
 
-void appendNewSceneIntoDatabase(const DynamicJsonDocument& sceneObject)
-{
-
-
-}
 
 void readExistingScenesFromDatabase()
 {
     Serial.println("Trying to readExistingScenesFromDatabase()...");
 
     // create json object into which you are going to read the file
-    DynamicJsonDocument doc(maxJsonDocSizeForAppending);
+    DynamicJsonDocument scenes(maxJsonDocSizeForAppending);
     // open file
     File file = SPIFFS.open(sceneDatabaseFileName, "r");
     // read file into json object and close file
-    deserializeJson(doc, file);
+    deserializeJson(scenes, file);
     file.close();
 
     // print total number of scenes
     Serial.print("Number of loaded scenes: ");
-    Serial.println(doc.size());
+    Serial.println(scenes["scenes"].size());
 
-    // make sure you can read properties
-    // String firstSceneName = doc[0]["sceneName"];
-    // Serial.print("firstSceneName: ");
-    // Serial.print(firstSceneName);
+
+
 }
 
 // ####### HELPER FUNCTIONS #######

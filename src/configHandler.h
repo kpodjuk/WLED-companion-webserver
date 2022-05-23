@@ -3,7 +3,6 @@
 void createConfigFile();
 void readExistingScenesFromDatabase();
 void printWholeArray(int *arrayPtr, int arraySize);
-void appendNewSceneIntoDatabase(const JsonDocument& sceneObject);
 
 const int16_t maxTargets = 3;                               // amount of individual WLED modules
 const int16_t maxSceneNameLength = 60;                      // longest possible scene name

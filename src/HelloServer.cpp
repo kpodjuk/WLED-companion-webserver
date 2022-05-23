@@ -100,7 +100,7 @@ void setup()
   });
 
   // handle POST data on /handleSceneCreation
-  server.on("/handleSceneCreation", handleSceneCreation);
+  server.on("/handleSceneCreation", HTTP_POST, handleSceneCreation);
 
   // ######################## Web server handler function define END ########################
 

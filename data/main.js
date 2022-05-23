@@ -134,7 +134,7 @@ function askAboutCurrentState(target = 0) {
     });
 
     xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4) {
+        if (xhr.readyState === 4 && xhr.status === 200) {
             // request went fine, got state
             var parsedJson = JSON.parse(xhr.response);
 
