@@ -16,10 +16,13 @@ function readSceneDropDown() {
     } else if (choosenOption == "noneChoosen") {
         // nothing to do 
         hideSceneCreationForm();
+    } else if (choosenOption == "loading") {
+        // do nothing 
+        hideSceneCreationForm();
     } else {
         // already existing scene was choosen, scenes have a value = sceneId
         hideSceneCreationForm();
-        applyScene(sceneId);
+        applyScene(choosenOption);
     }
 
 }
@@ -34,7 +37,15 @@ function hideSceneCreationForm() {
 }
 
 function applyScene(sceneId) {
-    console.log('scene is choosen with id: ' + sceneId);
+    // console.log('scene is choosen with id: ' + sceneId);
+
+    // send request with desired brightness and color
+    var xhr = new XMLHttpRequest();
+    for (let i = 0; i < maxTargets; i++) {
+        xhr.open('GET', '/applyScene?sceneId=' + sceneId, true);
+        xhr.send(null);
+    }
+
 }
 
 

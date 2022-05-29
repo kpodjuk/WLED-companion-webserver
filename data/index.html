@@ -9,10 +9,12 @@
     <label for="scenes">&#128220;Scene:</label>
 
     <select name="sceneDropdown" id="sceneDropdown" oninput="readSceneDropDown()">
-        <option value="noneChoosen"><font style='color: gray'>Choose your scene...</font></option>
+        <option value="noneChoosen">
+            <font style='color: gray'>&#128310; Choose your scene</font>
+        </option>U+1F511
 
-        <option value="createNewOne">Create new one...</option>
-
+        <option value="createNewOne">&#11088;Create new scene</option>
+        <option id="loading" value="loading">&#8987;Loading existing scenes...</option>
 
         <script src='populateScenes.js'></script>
 
@@ -24,28 +26,27 @@
                 <td colspan="3"><input type='text' id="scaneCreationSceneName" placeholder="Scene name"></td>
             </tr>
             <tr>
-                <td>WLED name</td>
+                <td>Name</td>
                 <td>Color</td>
                 <td>Brightness</td>
             </tr>
 
-
             <tr>
                 <td>Over the shelf</td>
                 <td><input id="sceneCreationFormColor1" type="color"></td>
-                <td><input type="range" min="0" max="255" class="slider" value="0" id="sceneCreationFormBrightness1"
-                        onchange="setBrightness(1)"></td>
+                <td><input type="range" min="0" max="255" class="slider" value="255" id="sceneCreationFormBrightness1">
+                </td>
             </tr>
             <tr>
                 <td>Under the shelf</td>
                 <td><input id='sceneCreationFormColor2' type="color"></td>
-                <td><input type="range" min="0" max="255" class="slider" value="0" id="sceneCreationFormBrightness2">
+                <td><input type="range" min="0" max="255" class="slider" value="255" id="sceneCreationFormBrightness2">
                 </td>
             </tr>
             <tr>
                 <td>Desk</td>
                 <td><input id='sceneCreationFormColor3' type="color"></td>
-                <td><input type="range" min="0" max="255" class="slider" value="0" id="sceneCreationFormBrightness3">
+                <td><input type="range" min="0" max="255" class="slider" value="255" id="sceneCreationFormBrightness3">
                 </td>
             </tr>
             <tr>
@@ -55,7 +56,6 @@
     </div>
     <hr>
     <h1>Current LED status:</h1>
-    <!-- <table border="1"> -->
     <table>
         <tr>
             <td>WLED name</td>
@@ -64,15 +64,15 @@
             <td>Status</td>
         </tr>
         <tr>
-            <td id="name0" style="color:gray">Lamp (all)</td>
+            <td id="name0" style="color:gray">All</td>
             <!-- <td><input id='solidColor0' type="color" onchange="setSolidColor(0)" oninput="setSolidColor(0)"></td> -->
-            <td><input id='solidColor0' type="color" onchange="setSolidColor(0)"></td>
+            <td><input id='solidColor0' type="color"
+                    onchange="setSolidColor(0, document.getElementById('solidColor' + 0).value)"></td>
             <td><input type="range" min="0" max="255" class="slider" disabled value="0" id="brightness0"
-                    onchange="setBrightness(0)"></td>
+                    onchange="setBrightness(0, document.getElementById('brightness' +0).value)"></td>
             <td>
-                <font color='red' id="status0">Disconnected</font>
+                <font color='red' id="status0">&#x1F534;</font>
             </td>
-
         </tr>
         <tr>
             <td colspan="3">
@@ -81,31 +81,34 @@
         </tr>
         <tr>
             <td id="name1" style="color:gray">Over the shelf</td>
-            <td><input style="animation-duration:1s" id='solidColor1' type="color" onchange="setSolidColor(1)"></td>
+            <td><input style="animation-duration:1s" id='solidColor1' type="color"
+                    onchange="setSolidColor(1,document.getElementById('solidColor' + 1).value)"></td>
             <td><input type="range" min="0" max="255" class="slider" disabled value="0" id="brightness1"
-                    onchange="setBrightness(1)"></td>
+                    onchange="setBrightness(1, document.getElementById('brightness' + 1).value)"></td>
             <td>
-                <font color='red' id="status1">Disconnected</font>
+                <font color='red' id="status1">&#x1F534;</font>
             </td>
 
         </tr>
         <tr>
             <td id="name2" style="color:gray">Under the shelf</td>
-            <td><input style="animation-duration:1s" id='solidColor2' type="color" onchange="setSolidColor(2)"></td>
+            <td><input style="animation-duration:1s" id='solidColor2' type="color"
+                    onchange="setSolidColor(2,document.getElementById('solidColor' + 2).value)"></td>
             <td><input type="range" min="0" max="255" class="slider" disabled value="0" id="brightness2"
-                    onchange="setBrightness(2)"></td>
+                    onchange="setBrightness(2, document.getElementById('brightness' + 2).value)"></td>
             <td>
-                <font color='red' id="status2">Disconnected</font>
+                <font color='red' id="status2">&#x1F534;</font>
             </td>
 
         </tr>
         <tr>
             <td id="name3" style="color:gray">Desk</td>
-            <td><input style="animation-duration:1s" id='solidColor3' type="color" onchange="setSolidColor(3)"></td>
+            <td><input style="animation-duration:1s" id='solidColor3' type="color"
+                    onchange="setSolidColor(3,document.getElementById('solidColor' + 3).value)"></td>
             <td><input type="range" min="0" max="255" class="slider" disabled value="0" id="brightness3"
-                    onchange="setBrightness(3)"></td>
+                    onchange="setBrightness(3, document.getElementById('brightness' + 3).value)"></td>
             <td>
-                <font color='red' id="status3">Disconnected</font>
+                <font color='red' id="status3">&#x1F534;</font>
             </td>
 
         </tr>

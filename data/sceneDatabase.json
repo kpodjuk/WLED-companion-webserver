@@ -1,0 +1,62 @@
+{
+    "scenes": [
+        {
+            "sceneName": "portal",
+            "affectedTargets": [
+                {
+                    "brightness": "255",
+                    "color": {
+                        "r": 255,
+                        "g": 136,
+                        "b": 0
+                    }
+                },
+                {
+                    "brightness": "255",
+                    "color": {
+                        "r": 29,
+                        "g": 0,
+                        "b": 245
+                    }
+                },
+                {
+                    "brightness": "255",
+                    "color": {
+                        "r": 253,
+                        "g": 255,
+                        "b": 235
+                    }
+                }
+            ]
+        },
+        {
+            "sceneName": "polish",
+            "affectedTargets": [
+                {
+                    "brightness": "255",
+                    "color": {
+                        "r": 255,
+                        "g": 255,
+                        "b": 255
+                    }
+                },
+                {
+                    "brightness": "255",
+                    "color": {
+                        "r": 245,
+                        "g": 0,
+                        "b": 0
+                    }
+                },
+                {
+                    "brightness": "255",
+                    "color": {
+                        "r": 255,
+                        "g": 0,
+                        "b": 0
+                    }
+                }
+            ]
+        }
+    ]
+}

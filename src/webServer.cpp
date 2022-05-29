@@ -1,4 +1,6 @@
 #include <ESP8266WiFi.h>
+#include <ESP8266HTTPClient.h>
+
 #include <WiFiClient.h>
 #include <ESP8266WiFiMulti.h>
 #include <ESP8266mDNS.h>
@@ -11,8 +13,33 @@ ESP8266WiFiMulti wifiMulti; // Create an instance of the ESP8266WiFiMulti class,
 
 ESP8266WebServer server(80); // Create a webserver object that listens for HTTP request on port 80
 
+// Module URLs
+const String lampUrl = "http://192.168.1.41/";          // 0
+const String overTheShelfUrl = "http://192.168.1.59/";  // 1
+const String underTheShelfUrl = "http://192.168.1.42/"; // 2
+const String deskUrl = "http://192.168.1.33/";          // 3
+
 String getContentType(String filename); // convert the file extension to the MIME type
 bool handleFileRead(String path);       // send the right file to the client (if it exists)
+
+String targetToUrl(int16_t target)
+{
+  String url;
+  switch (target)
+  {
+  case 0:
+    url = overTheShelfUrl;
+    break;
+  case 1:
+    url = underTheShelfUrl;
+    break;
+  case 2:
+    url = deskUrl;
+    break;
+  }
+
+  return url;
+}
 
 void handleSceneCreation()
 {
@@ -43,6 +70,7 @@ void handleSceneCreation()
 
   if (currentDatabaseStatus.isNull())
   {
+    Serial.println("No sceneDatabase.json, creating file!");
     // if file is empty, create new json object
     currentDatabaseStatus["scenes"] = JsonArray();
   }
@@ -65,8 +93,7 @@ void setup()
   wifiMulti.addAP("Orange_Swiatlowod_Gora", "mlekogrzybowe"); // add Wi-Fi networks you want to connect to
   // wifiMulti.addAP("Orange_Swiatlowod_E8A0", "mlekogrzybowe");
 
-  Serial.println("Connecting ...");
-  int i = 0;
+  Serial.println("Connecting...");
   // DISABLED WAITING FOR CONNECTION
   while (wifiMulti.run() != WL_CONNECTED)
   { // Wait for the Wi-Fi to connect
@@ -101,6 +128,9 @@ void setup()
 
   // handle POST data on /handleSceneCreation
   server.on("/handleSceneCreation", HTTP_POST, handleSceneCreation);
+
+  // handle POST data with desired scene on /applyScene
+  server.on("/applyScene", HTTP_GET, handleSceneSwitch);
 
   // ######################## Web server handler function define END ########################
 
@@ -145,4 +175,62 @@ bool handleFileRead(String path)
   }
   Serial.println("\tFile Not Found");
   return false; // If the file doesn't exist, return false
+}
+
+void handleSceneSwitch()
+{
+
+  // get scene id from url
+  String sceneId = server.arg("sceneId");
+
+  Serial.println("");
+  Serial.println("handleSceneSwitch()");
+  Serial.println("Applying scene:" + sceneId);
+
+  // get scene database
+  DynamicJsonDocument currentDatabaseStatus(maxJsonDocSizeForAppending);
+  // open file with current scene database
+  File file = SPIFFS.open(sceneDatabaseFileName, "r");
+
+  // read file into json object and close file
+  deserializeJson(currentDatabaseStatus, file);
+  file.close();
+
+  Serial.println("Scene properties:");
+
+  serializeJsonPretty(currentDatabaseStatus["scenes"][sceneId.toInt()], Serial);
+
+  // go thorough all targets and set desired properties for each
+  for (int16_t i = 0; i < maxTargets; i++)
+  {
+    int16_t brightness = currentDatabaseStatus["scenes"][sceneId.toInt()]["affectedTargets"][i]["brightness"]; // get desired brightness
+    int16_t red = currentDatabaseStatus["scenes"][sceneId.toInt()]["affectedTargets"][i]["color"]["r"];        // get desired red
+    int16_t green = currentDatabaseStatus["scenes"][sceneId.toInt()]["affectedTargets"][i]["color"]["g"];      // get desired green
+    int16_t blue = currentDatabaseStatus["scenes"][sceneId.toInt()]["affectedTargets"][i]["color"]["b"];       // get desired blue
+
+    // get url of current target
+    String url = targetToUrl(i) + "win";
+
+    // add parameters to url
+    url += "&A=" + String(brightness);
+    url += "&R=" + String(red);
+    url += "&G=" + String(green);
+    url += "&B=" + String(blue);
+
+    // send request to target
+    Serial.println("Sending request to target!" + i);
+    Serial.println("URL:" + url);
+
+    HTTPClient http;
+    WiFiClient client;
+
+    http.begin(client, url);
+    int httpCode = http.GET(); // Send the request
+    if (httpCode > 0)
+    {                                    // Check the returning code
+      String payload = http.getString(); // Get the request response payload
+      Serial.println(payload);           // Print the response payload
+    }
+    http.end(); // Close connection
+  }
 }

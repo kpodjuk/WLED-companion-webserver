@@ -58,8 +58,7 @@ function sendBrightnessRequest(desiredBrightness, target = 0) {
 
 }
 
-function setSolidColor(target = 0) {
-    var colorString = document.getElementById('solidColor' + target).value;
+function setSolidColor(target = 0, colorString) {
 
 
     colorArr = calculateRgbFromString(colorString);
@@ -69,6 +68,10 @@ function setSolidColor(target = 0) {
         ]
     }
     sendSolidColorRequest(request, target);
+}
+
+function setBrightness(target = 0, brightness) {
+    sendBrightnessRequest(brightness, target);
 }
 
 function calculateRgbFromString(string) {
@@ -100,14 +103,6 @@ function calculateStringFromRgb(r, g, b) {
     }
 
     return "#" + r + g + b;
-}
-
-
-
-function setBrightness(target = 0) {
-
-    var desiredBrightness = document.getElementById('brightness' + target).value;
-    sendBrightnessRequest(desiredBrightness, target);
 }
 
 
@@ -153,7 +148,12 @@ function askAboutCurrentState(target = 0) {
     xhr.open('GET', url, true);
     xhr.onload = function () {
     };
-    xhr.send(null);
+    try {
+        xhr.send(null);
+
+    } catch (e) {
+        console.log('Error during state request: ' + e);
+    }
 
 }
 
@@ -214,7 +214,7 @@ function lockTarget(target) {
     document.getElementById("brightness" + target).disabled = true;
     document.getElementById("brightness" + target).value = 0;
 
-    document.getElementById("status" + target).innerHTML = '<font color="red">Disconnected</font>';
+    document.getElementById("status" + target).innerHTML = '<font color="red">&#x1F534;</font>';
 }
 
 function unlockTarget(target) {
@@ -224,7 +224,7 @@ function unlockTarget(target) {
     // document.getElementById("solidColor"+target).value = '#000000';
     document.getElementById("brightness" + target).disabled = false;
     // document.getElementById("brightness"+target).value = 0;
-    document.getElementById("status" + target).innerHTML = '<font color="green">Connected</font>';
+    document.getElementById("status" + target).innerHTML = '<font color="green">&#x1F7E2;</font>';
 
     // clean previous state so we are sure it's updated after connecting again
 
