@@ -19,7 +19,7 @@ askAboutAllCurrentStates();
 // set interval for state refresh
 window.setInterval(function () {
     askAboutAllCurrentStates();
-}, 2000);
+}, 3000);
 
 function sendSolidColorRequest(request, target = 0) {
 
@@ -108,8 +108,12 @@ function calculateStringFromRgb(r, g, b) {
 
 var previousBrightness = [];
 var previousColor = [];
+var timeOfLastStateRequest;
+var timeOfLastStateResponse;
 
 function askAboutCurrentState(target = 0) {
+
+    timeOfLastStateRequest = new Date();
 
     // check if current target is locked or not
     var targetIsLocked = document.getElementById('brightness' + target).disabled;
@@ -130,6 +134,9 @@ function askAboutCurrentState(target = 0) {
 
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
+            timeOfLastStateResponse = new Date();
+            // fill current status field with information about response time
+            document.getElementById('status' + target).innerHTML = timeOfLastStateResponse - timeOfLastStateRequest + "ms";
             // request went fine, got state
             var parsedJson = JSON.parse(xhr.response);
 
@@ -206,6 +213,7 @@ function targetToUrl(target) {
 
 function lockTarget(target) {
 
+
     document.getElementById("name" + target).style.color = "gray";
 
     document.getElementById("solidColor" + target).disabled = true;
@@ -214,7 +222,11 @@ function lockTarget(target) {
     document.getElementById("brightness" + target).disabled = true;
     document.getElementById("brightness" + target).value = 0;
 
-    document.getElementById("status" + target).innerHTML = '<font color="red">&#x1F534;</font>';
+    document.getElementById("statusDot" + target).innerHTML = '&#x1F534;'; // red dot
+    document.getElementById("statusDot" + target).innerHTML = '&#x1F534;'; // red dot
+
+    document.getElementById("status" + target).innerHTML = 'offline'; // change ping status to offline
+    document.getElementById("status" + target).style.color = 'gray'; // change status font color to gray
 }
 
 function unlockTarget(target) {
@@ -224,7 +236,8 @@ function unlockTarget(target) {
     // document.getElementById("solidColor"+target).value = '#000000';
     document.getElementById("brightness" + target).disabled = false;
     // document.getElementById("brightness"+target).value = 0;
-    document.getElementById("status" + target).innerHTML = '<font color="green">&#x1F7E2;</font>';
+    document.getElementById("statusDot" + target).innerHTML = '&#x1F7E2;'; // green
+    document.getElementById("status" + target).style.color = 'black'; // change status font color back to black
 
     // clean previous state so we are sure it's updated after connecting again
 

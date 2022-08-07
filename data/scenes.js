@@ -37,13 +37,29 @@ function hideSceneCreationForm() {
 }
 
 function applyScene(sceneId) {
-    // console.log('scene is choosen with id: ' + sceneId);
+    let success = true;
 
-    // send request with desired brightness and color
+    // send request with desired brightness and color to all targets
     var xhr = new XMLHttpRequest();
     for (let i = 0; i < maxTargets; i++) {
         xhr.open('GET', '/applyScene?sceneId=' + sceneId, true);
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+            } else {
+                success = false;
+            }
+        };
+
         xhr.send(null);
+
+    }
+
+    // check if all requests were successful, update status message accordignly
+    if (success) {
+        document.getElementById('sceneChangeStatus').innerHTML = "<font style='color:green'>Scene change request sent to all targets</font>";
+    } else {
+        document.getElementById('sceneChangeStatus').innerHTML = "<font style='color:red'>Error while changing scene!</font>";
     }
 
 }
@@ -96,6 +112,9 @@ function createScene(scene) {
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
+            document.getElementById('sceneCreationFormStatus').innerHTML = "<font style='color:green'>Success!</font>";
+        } else {
+            document.getElementById('sceneCreationFormStatus').innerHTML = "<font style='color:red'>Error!</font>";
         }
     };
 
@@ -103,5 +122,7 @@ function createScene(scene) {
     var data = JSON.stringify(scene);
     console.log(data)
     xhr.send(data);
+
+
 
 }

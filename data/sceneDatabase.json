@@ -1,7 +1,7 @@
 {
     "scenes": [
         {
-            "sceneName": "portal",
+            "sceneName": "test: Portal",
             "affectedTargets": [
                 {
                     "brightness": "255",
@@ -30,7 +30,36 @@
             ]
         },
         {
-            "sceneName": "polish",
+            "sceneName": "test: AllOff",
+            "affectedTargets": [
+                {
+                    "brightness": "0",
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    }
+                },
+                {
+                    "brightness": "0",
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    }
+                },
+                {
+                    "brightness": "0",
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0
+                    }
+                }
+            ]
+        },
+        {
+            "sceneName": "test: AllOn",
             "affectedTargets": [
                 {
                     "brightness": "255",
@@ -43,8 +72,29 @@
                 {
                     "brightness": "255",
                     "color": {
-                        "r": 245,
-                        "g": 0,
+                        "r": 255,
+                        "g": 255,
+                        "b": 255
+                    }
+                },
+                {
+                    "brightness": "255",
+                    "color": {
+                        "r": 255,
+                        "g": 255,
+                        "b": 255
+                    }
+                }
+            ]
+        },
+        {
+            "sceneName": "test: RGB",
+            "affectedTargets": [
+                {
+                    "brightness": "255",
+                    "color": {
+                        "r": 0,
+                        "g": 255,
                         "b": 0
                     }
                 },
@@ -54,6 +104,14 @@
                         "r": 255,
                         "g": 0,
                         "b": 0
+                    }
+                },
+                {
+                    "brightness": "255",
+                    "color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 255
                     }
                 }
             ]

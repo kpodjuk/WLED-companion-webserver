@@ -183,6 +183,10 @@ void handleSceneSwitch()
   // get scene id from url
   String sceneId = server.arg("sceneId");
 
+  // send response
+  server.send(200, "text/plain");
+
+
   Serial.println("");
   Serial.println("handleSceneSwitch()");
   Serial.println("Applying scene:" + sceneId);
@@ -196,9 +200,8 @@ void handleSceneSwitch()
   deserializeJson(currentDatabaseStatus, file);
   file.close();
 
-  Serial.println("Scene properties:");
-
-  serializeJsonPretty(currentDatabaseStatus["scenes"][sceneId.toInt()], Serial);
+  // Serial.println("Scene properties:");
+  // serializeJsonPretty(currentDatabaseStatus["scenes"][sceneId.toInt()], Serial);
 
   // go thorough all targets and set desired properties for each
   for (int16_t i = 0; i < maxTargets; i++)
@@ -218,8 +221,8 @@ void handleSceneSwitch()
     url += "&B=" + String(blue);
 
     // send request to target
-    Serial.println("Sending request to target!" + i);
-    Serial.println("URL:" + url);
+    // Serial.println("Sending request to target!" + i);
+    // Serial.println("URL:" + url);
 
     HTTPClient http;
     WiFiClient client;
@@ -228,8 +231,8 @@ void handleSceneSwitch()
     int httpCode = http.GET(); // Send the request
     if (httpCode > 0)
     {                                    // Check the returning code
-      String payload = http.getString(); // Get the request response payload
-      Serial.println(payload);           // Print the response payload
+      // String payload = http.getString(); // Get the request response payload
+      // Serial.println(payload);           // Print the response payload
     }
     http.end(); // Close connection
   }

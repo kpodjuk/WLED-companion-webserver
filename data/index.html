@@ -6,24 +6,34 @@
 
 <body>
     <h1>Choose a scene:</h1>
-    <label for="scenes">&#128220;Scene:</label>
+    <table>
+        <tr>
+            <td>
+                <label for="scenes">&#128220;Scene:</label>
 
-    <select name="sceneDropdown" id="sceneDropdown" oninput="readSceneDropDown()">
-        <option value="noneChoosen">
-            <font style='color: gray'>&#128310; Choose your scene</font>
-        </option>U+1F511
+                <select name="sceneDropdown" id="sceneDropdown" oninput="readSceneDropDown()">
+                    <option value="noneChoosen">
+                        <font style='color: gray'>&#x1F3C1; Choose options here...</font>
+                    </option>
+                    <option value="createNewOne">&#x1f195; Create new scene</option>
+                    <option id="loading" value="loading">&#8987; Loading existing scenes...</option>
 
-        <option value="createNewOne">&#11088;Create new scene</option>
-        <option id="loading" value="loading">&#8987;Loading existing scenes...</option>
+                    <script src='populateScenes.js'></script>
 
-        <script src='populateScenes.js'></script>
+                </select>
+            </td>
+            <td id="sceneChangeStatus">
+                
+            </td>
+        </tr>
+    </table>
 
-    </select>
     <div style='display: none' id="sceneCreationForm">
         <h2>Choose desired scene parameters:</h2>
         <table>
             <tr>
-                <td colspan="3"><input type='text' id="scaneCreationSceneName" placeholder="Scene name"></td>
+                <td colspan="3"><input type='text' minlength="1" id="scaneCreationSceneName" placeholder="Scene name">
+                </td>
             </tr>
             <tr>
                 <td>Name</td>
@@ -50,7 +60,8 @@
                 </td>
             </tr>
             <tr>
-                <td><button type="button" onclick="submitSceneCreationForm()">Create scene!</button></td>
+                <td><button type="button" onclick="submitSceneCreationForm()">Save scene!</button></td>
+                <td id="sceneCreationFormStatus"></td>
             </tr>
         </table>
     </div>
@@ -71,7 +82,8 @@
             <td><input type="range" min="0" max="255" class="slider" disabled value="0" id="brightness0"
                     onchange="setBrightness(0, document.getElementById('brightness' +0).value)"></td>
             <td>
-                <font color='red' id="status0">&#x1F534;</font>
+                <font id='statusDot0'>&#x1F534;</font>
+                <font id="status0" style="color: gray">offline</font>
             </td>
         </tr>
         <tr>
@@ -86,7 +98,8 @@
             <td><input type="range" min="0" max="255" class="slider" disabled value="0" id="brightness1"
                     onchange="setBrightness(1, document.getElementById('brightness' + 1).value)"></td>
             <td>
-                <font color='red' id="status1">&#x1F534;</font>
+                <font id="statusDot1">&#x1F534;</font>
+                <font id="status1" style="color: gray">offline</font>
             </td>
 
         </tr>
@@ -97,7 +110,8 @@
             <td><input type="range" min="0" max="255" class="slider" disabled value="0" id="brightness2"
                     onchange="setBrightness(2, document.getElementById('brightness' + 2).value)"></td>
             <td>
-                <font color='red' id="status2">&#x1F534;</font>
+                <font id="statusDot2">&#x1F534;</font>
+                <font id="status2" style="color: gray">offline</font>
             </td>
 
         </tr>
@@ -108,7 +122,8 @@
             <td><input type="range" min="0" max="255" class="slider" disabled value="0" id="brightness3"
                     onchange="setBrightness(3, document.getElementById('brightness' + 3).value)"></td>
             <td>
-                <font color='red' id="status3">&#x1F534;</font>
+                <font id="statusDot3">&#x1F534;</font>
+                <font id="status3" style="color: gray">offline</font>
             </td>
 
         </tr>

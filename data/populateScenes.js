@@ -20,7 +20,6 @@ function done() {
     document.getElementById('loading').style.display = 'none';
     // populate dropdown with existing scenes
     for (var i = 0; i < sceneDatabase.scenes.length; i++) {
-        document.getElementById('sceneDropdown').innerHTML += "<option value=" + i + ">" + "&#9989;" + sceneDatabase.scenes[i].sceneName + "</option>"
-
+        document.getElementById('sceneDropdown').innerHTML += "<option value=" + i + ">" + "&#x1F4D6; " + sceneDatabase.scenes[i].sceneName + "</option>"	
     }
 }
