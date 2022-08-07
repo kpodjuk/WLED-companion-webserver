@@ -1,36 +1,7 @@
 {
     "scenes": [
         {
-            "sceneName": "test: Portal",
-            "affectedTargets": [
-                {
-                    "brightness": "255",
-                    "color": {
-                        "r": 255,
-                        "g": 136,
-                        "b": 0
-                    }
-                },
-                {
-                    "brightness": "255",
-                    "color": {
-                        "r": 29,
-                        "g": 0,
-                        "b": 245
-                    }
-                },
-                {
-                    "brightness": "255",
-                    "color": {
-                        "r": 253,
-                        "g": 255,
-                        "b": 235
-                    }
-                }
-            ]
-        },
-        {
-            "sceneName": "test: AllOff",
+            "sceneName": "All off",
             "affectedTargets": [
                 {
                     "brightness": "0",
@@ -59,7 +30,7 @@
             ]
         },
         {
-            "sceneName": "test: AllOn",
+            "sceneName": "All on",
             "affectedTargets": [
                 {
                     "brightness": "255",
@@ -88,7 +59,7 @@
             ]
         },
         {
-            "sceneName": "test: RGB",
+            "sceneName": "Red green blue",
             "affectedTargets": [
                 {
                     "brightness": "255",

@@ -9,7 +9,7 @@
     <table>
         <tr>
             <td>
-                <label for="scenes">&#128220;Scene:</label>
+                <label for="scenes">&#128220;Option:</label>
 
                 <select name="sceneDropdown" id="sceneDropdown" oninput="readSceneDropDown()">
                     <option value="noneChoosen">
@@ -29,6 +29,7 @@
     </table>
 
     <div style='display: none' id="sceneCreationForm">
+        <form>
         <h2>Choose desired scene parameters:</h2>
         <table>
             <tr>
@@ -64,6 +65,7 @@
                 <td id="sceneCreationFormStatus"></td>
             </tr>
         </table>
+        </form>
     </div>
     <hr>
     <h1>Current LED status:</h1>
